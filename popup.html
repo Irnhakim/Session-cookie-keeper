@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Login - Session Saver</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🍪 Auto Login</h1>
+      <p class="subtitle">Simpan dan restore session login</p>
+    </header>
+
+    <!-- Form Simpan Session -->
+    <div class="form-section">
+      <h2>💾 Simpan Session Login</h2>
+      <form id="saveSessionForm">
+        <div class="input-group">
+          <label for="sessionName">Nama Session</label>
+          <input type="text" id="sessionName" placeholder="Contoh: Gmail, Facebook, Netflix" required>
+        </div>
+        
+        <div class="info-box">
+          <p>ℹ️ <strong>Cara pakai:</strong></p>
+          <ol>
+            <li>Login ke website di tab aktif</li>
+            <li>Masukkan nama session di atas</li>
+            <li>Klik "Simpan Session"</li>
+            <li>Cookies login akan tersimpan otomatis</li>
+          </ol>
+        </div>
+
+        <button type="submit" class="btn btn-primary">💾 Simpan Session</button>
+      </form>
+    </div>
+
+    <!-- Daftar Session Tersimpan -->
+    <div class="accounts-section">
+      <h2>📂 Session Tersimpan</h2>
+      <div id="sessionsList" class="accounts-list">
+        <p class="empty-state">Belum ada session tersimpan</p>
+      </div>
+    </div>
+
+    <!-- Status Message -->
+    <div id="statusMessage" class="status-message"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
