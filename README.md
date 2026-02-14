@@ -16,7 +16,7 @@ A Chrome Extension to save and restore login sessions using cookies. No more rem
 ## 📁 File Structure
 
 ```
-../Autologin/
+../Session-cookie-keeper/
 ├── manifest.json      # Chrome extension configuration
 ├── popup.html         # Extension popup UI
 ├── popup.css          # Popup styling
@@ -41,7 +41,7 @@ A Chrome Extension to save and restore login sessions using cookies. No more rem
 
 3. **Load the Extension**
    - Click **"Load unpacked"**
-   - Select the folder `d:/Tools/Autologin`
+   - Select the folder `../Session-cookie-keeper`
    - The extension will appear in the list
 
 4. **Pin the Extension (Optional)**
