@@ -1,6 +1,8 @@
 # 🍪 Session Cookies Keeper - Chrome Extension
 
-A Chrome Extension to save and restore login sessions using cookies. No more remembering passwords — just save your session cookies!
+A Chrome Extension to save and restore login sessions using cookies. No more remembering passwords — just save your session cookies! 
+<img width="507" height="754" alt="image" src="https://github.com/user-attachments/assets/41c17bd8-de65-461e-8de2-0a7dede30436" />
+
 
 ## 🎯 Main Features
 
