@@ -1,142 +1,142 @@
 # 🍪 Session Cookies Keeper - Chrome Extension
 
-Ekstensi Chrome untuk menyimpan dan me-restore session login menggunakan cookies. Tidak perlu lagi mengingat password - cukup simpan session cookies Anda!
+A Chrome Extension to save and restore login sessions using cookies. No more remembering passwords — just save your session cookies!
 
-## 🎯 Fitur Utama
+## 🎯 Main Features
 
-- **Simpan Session** - Simpan cookies login dari tab aktif dengan satu klik
-- **Restore Session** - Kembalikan cookies untuk login otomatis
-- **Buka & Login** - Buka website di tab baru dengan session langsung aktif
-- **Multi Session** - Simpan banyak session untuk website yang berbeda
-- **Aman** - Tidak menyimpan password, hanya cookies session
+- **Save Session** – Save login cookies from the active tab with one click  
+- **Restore Session** – Restore cookies for automatic login  
+- **Open & Login** – Open the website in a new tab with the session instantly active  
+- **Multi Session** – Save multiple sessions for different websites  
+- **Secure** – Does not store passwords, only session cookies  
 
-## 📁 Struktur File
+## 📁 File Structure
 
 ```
 ../Autologin/
-├── manifest.json      # Konfigurasi ekstensi Chrome
-├── popup.html         # UI popup ekstensi
-├── popup.css          # Styling popup
-├── popup.js           # Logika popup (save/load sessions)
+├── manifest.json      # Chrome extension configuration
+├── popup.html         # Extension popup UI
+├── popup.css          # Popup styling
+├── popup.js           # Popup logic (save/load sessions)
 ├── background.js      # Service worker (restore cookies)
 ├── content.js         # Content script (cookie injection)
-├── icons/             # Folder icon ekstensi
+├── icons/             # Extension icons folder
 │   ├── icon16.png
 │   ├── icon48.png
 │   └── icon128.png
-└── README.md          # Dokumentasi ini
+└── README.md          # This documentation
 ```
 
-## 🚀 Cara Install
+## 🚀 How to Install
 
-1. **Buka Chrome Extensions**
-   - Ketik `chrome://extensions/` di address bar Chrome
-   - Atau klik menu Chrome → More tools → Extensions
+1. **Open Chrome Extensions**
+   - Type `chrome://extensions/` in the Chrome address bar  
+   - Or click Chrome menu → More tools → Extensions  
 
-2. **Aktifkan Developer Mode**
-   - Toggle "Developer mode" di kanan atas (ON)
+2. **Enable Developer Mode**
+   - Toggle "Developer mode" in the top-right corner (ON)
 
-3. **Load Extension**
-   - Klik tombol **"Load unpacked"**
-   - Pilih folder `d:/Tools/Autologin`
-   - Ekstensi akan muncul di daftar
+3. **Load the Extension**
+   - Click **"Load unpacked"**
+   - Select the folder `d:/Tools/Autologin`
+   - The extension will appear in the list
 
-4. **Pin Extension (Opsional)**
-   - Klik icon puzzle 🧩 di toolbar Chrome
-   - Klik pin 📌 di sebelah "Auto Login"
-   - Icon akan muncul di toolbar untuk akses cepat
+4. **Pin the Extension (Optional)**
+   - Click the puzzle icon 🧩 in the toolbar
+   - Click the pin icon 📌 next to "Auto Login"
+   - The icon will appear in the toolbar for quick access
 
-## 📖 Cara Penggunaan
+## 📖 How to Use
 
-### Menyimpan Session Login
+### Saving a Login Session
 
-1. **Login ke website** yang ingin disimpan (contoh: Gmail, Facebook, Netflix)
-2. **Pastikan sudah login** dan session aktif
-3. **Klik icon Auto Login** di toolbar Chrome
-4. **Masukkan nama session** (contoh: "Gmail Pribadi")
-5. **Klik "Simpan Session"**
-6. Extension akan mengambil semua cookies dari website tersebut
+1. **Log in to the website** you want to save (example: Gmail, Facebook, Netflix)
+2. **Make sure you are logged in** and the session is active
+3. **Click the Auto Login icon** in the Chrome toolbar
+4. **Enter a session name** (example: "Personal Gmail")
+5. Click **"Save Session"**
+6. The extension will capture all cookies from that website
 
-### Restore Session (Login Otomatis)
+### Restoring a Session (Auto Login)
 
-**Cara 1: Restore di Tab Aktif**
-1. Buka website yang ingin di-login (atau biarkan di halaman mana saja)
-2. Klik icon Auto Login
-3. Klik tombol **"🔓 Restore Session"** pada session yang diinginkan
-4. Cookies akan di-set ke tab aktif
-5. Refresh halaman (F5) jika perlu
+**Method 1: Restore in the Active Tab**
+1. Open the website you want to log in to (or stay on any page)
+2. Click the Auto Login icon
+3. Click **"🔓 Restore Session"** on the session you want
+4. Cookies will be applied to the active tab
+5. Refresh the page (F5) if needed
 
-**Cara 2: Buka Tab Baru + Auto Login**
-1. Klik icon Auto Login
-2. Klik tombol **"🌐 Buka & Login"** pada session yang diinginkan
-3. Tab baru akan terbuka dengan URL website
-4. Session cookies otomatis di-restore
-5. Anda langsung login!
+**Method 2: Open a New Tab + Auto Login**
+1. Click the Auto Login icon
+2. Click **"🌐 Open & Login"** on the session you want
+3. A new tab will open with the saved website URL
+4. Session cookies will automatically be restored
+5. You will be logged in instantly!
 
-### Menghapus Session
+### Deleting a Session
 
-1. Klik icon Auto Login
-2. Klik tombol **"🗑️"** (delete) pada session yang ingin dihapus
-3. Konfirmasi penghapusan
+1. Click the Auto Login icon
+2. Click the **"🗑️"** (delete) button on the session you want to remove
+3. Confirm deletion
 
-## 🔧 Permissions yang Dibutuhkan
+## 🔧 Required Permissions
 
-| Permission | Fungsi |
-|------------|--------|
-| `storage` | Menyimpan data session lokal |
-| `cookies` | Mengambil dan mengatur cookies |
-| `tabs` | Membuka tab baru dan mengakses tab aktif |
-| `activeTab` | Akses tab yang sedang aktif |
-| `scripting` | Inject script untuk set cookies |
-| `<all_urls>` | Akses ke semua website |
+| Permission | Function |
+|------------|----------|
+| `storage` | Stores session data locally |
+| `cookies` | Reads and sets cookies |
+| `tabs` | Opens new tabs and accesses the active tab |
+| `activeTab` | Accesses the currently active tab |
+| `scripting` | Injects scripts to set cookies |
+| `<all_urls>` | Access to all websites |
 
-## ⚠️ Catatan Penting
+## ⚠️ Important Notes
 
-### Keamanan & Privasi
-- **Cookies disimpan lokal** di browser Anda (Chrome Storage)
-- **Tidak ada data yang dikirim ke server** - 100% offline
-- **Hati-hati berbagi device** - siapapun dengan akses browser bisa menggunakan session tersimpan
+### Security & Privacy
+- **Cookies are stored locally** in your browser (Chrome Storage)
+- **No data is sent to any server** — 100% offline
+- **Be careful when sharing your device** — anyone with browser access can use saved sessions
 
-### Keterbatasan
-- **HttpOnly Cookies** - Beberapa cookies dengan flag `httpOnly` tidak bisa diakses JavaScript, tapi tetap dicoba restore via Chrome Cookies API
-- **Session Expired** - Jika session di server sudah expired, restore cookies tidak akan berfungsi
-- **Cross-Domain** - Cookies dengan domain restrictions mungkin tidak berfungsi di subdomain berbeda
-- **Secure Cookies** - Cookies dengan flag `secure` hanya berfungsi di HTTPS
+### Limitations
+- **HttpOnly Cookies** – Some cookies with the `httpOnly` flag cannot be accessed by JavaScript, but the extension still attempts restoration via Chrome Cookies API  
+- **Session Expired** – If the server session has expired, restoring cookies will not work  
+- **Cross-Domain** – Cookies with domain restrictions may not work across different subdomains  
+- **Secure Cookies** – Cookies with the `secure` flag only work on HTTPS websites  
 
 ### Troubleshooting
 
-**Session tidak berfungsi setelah restore?**
-- Pastikan Anda tidak logout dari website di device lain
-- Coba refresh halaman (F5) setelah restore
-- Periksa apakah session sudah expired di server
+**Session does not work after restoring?**
+- Make sure you did not log out from the website on another device
+- Try refreshing the page (F5) after restoring
+- Check if the session has expired on the server
 
-**Cookies tidak tersimpan?**
-- Pastikan Anda sudah login sebelum menyimpan session
-- Beberapa website menggunakan proteksi anti-cookie-stealing
-- Coba simpan session lagi setelah beberapa detik login
+**Cookies are not saved?**
+- Make sure you are logged in before saving the session
+- Some websites use anti-cookie-stealing protections
+- Try saving the session again a few seconds after logging in
 
-**Website tidak recognize login?**
-- Beberapa website menggunakan fingerprinting tambahan (IP, User-Agent, dll)
-- Session mungkin terbatas untuk device/browser tertentu
+**Website does not recognize the login?**
+- Some websites use additional fingerprinting (IP, User-Agent, etc.)
+- Sessions may be limited to a specific device/browser
 
-## 🛠️ Teknis
+## 🛠️ Technical Details
 
-### Bagaimana Cara Kerjanya?
+### How Does It Work?
 
-1. **Save Session:**
-   - Ambil semua cookies dari domain website menggunakan `chrome.cookies.getAll()`
-   - Simpan ke Chrome Storage dengan metadata (nama, URL, timestamp)
+1. **Save Session**
+   - Collect all cookies from the website domain using `chrome.cookies.getAll()`
+   - Store them in Chrome Storage with metadata (name, URL, timestamp)
 
-2. **Restore Session:**
-   - Gunakan `chrome.cookies.set()` untuk restore httpOnly cookies
-   - Inject JavaScript untuk restore cookies yang bisa diakses JS
-   - Refresh tab untuk apply perubahan
+2. **Restore Session**
+   - Use `chrome.cookies.set()` to restore HttpOnly cookies
+   - Inject JavaScript to restore cookies accessible via JS
+   - Refresh the tab to apply changes
 
-3. **Auto-Login:**
-   - Buka tab baru dengan URL tersimpan
-   - Tunggu page load
+3. **Auto-Login**
+   - Open a new tab with the saved URL
+   - Wait for the page to load
    - Restore cookies
-   - Refresh untuk apply session
+   - Refresh to apply the session
 
 ### Browser Support
 
@@ -144,17 +144,16 @@ Ekstensi Chrome untuk menyimpan dan me-restore session login menggunakan cookies
 - ✅ Microsoft Edge
 - ✅ Brave
 - ✅ Opera
-- ❌ Firefox (memerlukan modifikasi manifest v2)
+- ❌ Firefox (requires Manifest V2 modifications)
 
+## 🤝 Contributing
 
-## 🤝 Kontribusi
+Feel free to fork and submit a pull request for improvements or new features!
 
-Silakan fork dan submit pull request untuk perbaikan atau fitur baru!
+## 📄 License
 
-## 📄 Lisensi
-
-MIT License - Bebas digunakan untuk personal atau komersial.
+MIT License — Free to use for personal or commercial purposes.
 
 ---
 
-**Dibuat dengan ❤️ untuk memudahkan akses website favorit Anda**
+**Made with ❤️ to make accessing your favorite websites easier**
