@@ -13,7 +13,7 @@ Ekstensi Chrome untuk menyimpan dan me-restore session login menggunakan cookies
 ## 📁 Struktur File
 
 ```
-d:/Tools/Autologin/
+../Autologin/
 ├── manifest.json      # Konfigurasi ekstensi Chrome
 ├── popup.html         # UI popup ekstensi
 ├── popup.css          # Styling popup
