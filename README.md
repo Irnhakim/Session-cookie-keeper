@@ -1,4 +1,4 @@
-# 🍪 Auto Login - Chrome Extension
+# 🍪 Session Cookies Keeper - Chrome Extension
 
 Ekstensi Chrome untuk menyimpan dan me-restore session login menggunakan cookies. Tidak perlu lagi mengingat password - cukup simpan session cookies Anda!
 
@@ -146,13 +146,6 @@ Ekstensi Chrome untuk menyimpan dan me-restore session login menggunakan cookies
 - ✅ Opera
 - ❌ Firefox (memerlukan modifikasi manifest v2)
 
-## 📝 Changelog
-
-### v1.0.0
-- Initial release
-- Cookie-based session save/restore
-- Auto-login dengan tab baru
-- UI dalam Bahasa Indonesia
 
 ## 🤝 Kontribusi
 
