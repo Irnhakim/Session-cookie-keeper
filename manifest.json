@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "Auto Login",
   "version": "1.0.0",
-  "description": "Simpan dan auto-login ke website favorit Anda dengan satu klik",
+  "description": "Save and auto-login to your favorite websites with one click",
+
   "permissions": [
     "storage",
     "activeTab",

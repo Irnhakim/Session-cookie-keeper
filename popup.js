@@ -15,14 +15,14 @@ function saveCurrentSession() {
   const sessionName = document.getElementById('sessionName').value.trim();
 
   if (!sessionName) {
-    showStatus('Mohon masukkan nama session!', 'error');
+    showStatus('Please enter a session name!', 'error');
     return;
   }
 
   // Get active tab to extract URL and cookies
   chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
     if (!tabs || tabs.length === 0) {
-      showStatus('Tidak ada tab aktif!', 'error');
+      showStatus('No active tab!', 'error');
       return;
     }
 
@@ -71,16 +71,14 @@ function saveCurrentSession() {
       return uniqueCookies;
     };
 
-
     getCookiesForDomain(domain).then(function(cookies) {
       console.log('Cookies found:', cookies.length, 'for domain:', domain);
       console.log('Cookie names:', cookies.map(c => c.name).join(', '));
       
       if (!cookies || cookies.length === 0) {
-        showStatus('Tidak ada cookies ditemukan. Pastikan Anda sudah login!', 'error');
+        showStatus('No cookies found. Make sure you are logged in!', 'error');
         return;
       }
-
 
       // Filter out httpOnly cookies that can't be set via JavaScript
       // but we still save them for restoration via background script
@@ -111,7 +109,7 @@ function saveCurrentSession() {
         // Check if session with same name exists
         const existingIndex = sessions.findIndex(s => s.name === sessionName);
         if (existingIndex !== -1) {
-          if (!confirm(`Session "${sessionName}" sudah ada. Timpa?`)) {
+          if (!confirm(`Session "${sessionName}" already exists. Overwrite?`)) {
             return;
           }
           sessions[existingIndex] = sessionData;
@@ -121,21 +119,20 @@ function saveCurrentSession() {
         
         chrome.storage.local.set({ sessions: sessions }, function() {
           if (chrome.runtime.lastError) {
-            showStatus('Gagal menyimpan session!', 'error');
+            showStatus('Failed to save session!', 'error');
             return;
           }
           
           const cookieCount = cookies ? cookies.length : 0;
-          showStatus(`Session "${sessionName}" berhasil disimpan! (${cookieCount} cookies)`, 'success');
+          showStatus(`Session "${sessionName}" saved successfully! (${cookieCount} cookies)`, 'success');
           document.getElementById('saveSessionForm').reset();
           loadSessions();
         });
       });
     }).catch(function(error) {
       console.error('Error getting cookies:', error);
-      showStatus('Error mengambil cookies: ' + error.message, 'error');
+      showStatus('Error getting cookies: ' + error.message, 'error');
     });
-
   });
 }
 
@@ -146,7 +143,7 @@ function loadSessions() {
     const sessionsList = document.getElementById('sessionsList');
     
     if (sessions.length === 0) {
-      sessionsList.innerHTML = '<p class="empty-state">Belum ada session tersimpan</p>';
+      sessionsList.innerHTML = '<p class="empty-state">No sessions saved yet</p>';
       return;
     }
 
@@ -158,7 +155,7 @@ function loadSessions() {
       sessionItem.dataset.sessionId = session.id;
       
       const cookieCount = session.cookies ? session.cookies.length : 0;
-      const createdDate = new Date(session.createdAt).toLocaleDateString('id-ID');
+      const createdDate = new Date(session.createdAt).toLocaleDateString('en-US');
       
       sessionItem.innerHTML = `
         <div class="account-header">
@@ -166,13 +163,13 @@ function loadSessions() {
           <span class="cookie-count">${cookieCount} 🍪</span>
         </div>
         <div class="account-url">${escapeHtml(session.domain)}</div>
-        <div class="account-meta">Disimpan: ${createdDate}</div>
+        <div class="account-meta">Saved: ${createdDate}</div>
         <div class="account-actions">
           <button class="btn btn-success" data-action="restore">
             🔓 Restore Session
           </button>
           <button class="btn btn-secondary" data-action="open">
-            🌐 Buka & Login
+            🌐 Open & Login
           </button>
           <button class="btn btn-danger" data-action="delete">
             🗑️
@@ -194,7 +191,6 @@ function loadSessions() {
   });
 }
 
-
 // Restore session cookies to current tab
 function restoreSession(sessionId) {
   chrome.storage.local.get(['sessions'], function(result) {
@@ -202,7 +198,7 @@ function restoreSession(sessionId) {
     const session = sessions.find(s => s.id === sessionId);
     
     if (!session) {
-      showStatus('Session tidak ditemukan!', 'error');
+      showStatus('Session not found!', 'error');
       return;
     }
 
@@ -218,9 +214,9 @@ function restoreSession(sessionId) {
       }
       
       if (response && response.success) {
-        showStatus('Session berhasil di-restore! Refresh halaman untuk melihat efek.', 'success');
+        showStatus('Session restored successfully! Refresh the page to see the effect.', 'success');
       } else {
-        showStatus('Gagal restore session: ' + (response?.error || 'Unknown error'), 'error');
+        showStatus('Failed to restore session: ' + (response?.error || 'Unknown error'), 'error');
       }
     });
   });
@@ -233,7 +229,7 @@ function openAndRestore(sessionId) {
     const session = sessions.find(s => s.id === sessionId);
     
     if (!session) {
-      showStatus('Session tidak ditemukan!', 'error');
+      showStatus('Session not found!', 'error');
       return;
     }
 
@@ -249,10 +245,10 @@ function openAndRestore(sessionId) {
       }
       
       if (response && response.success) {
-        showStatus('Tab baru dibuka dengan session restored!', 'success');
+        showStatus('New tab opened with session restored!', 'success');
         window.close(); // Close popup
       } else {
-        showStatus('Gagal membuka tab: ' + (response?.error || 'Unknown error'), 'error');
+        showStatus('Failed to open tab: ' + (response?.error || 'Unknown error'), 'error');
       }
     });
   });
@@ -260,7 +256,7 @@ function openAndRestore(sessionId) {
 
 // Delete session
 function deleteSession(sessionId) {
-  if (!confirm('Yakin ingin menghapus session ini?')) {
+  if (!confirm('Are you sure you want to delete this session?')) {
     return;
   }
 
@@ -271,11 +267,11 @@ function deleteSession(sessionId) {
     
     chrome.storage.local.set({ sessions: sessions }, function() {
       if (chrome.runtime.lastError) {
-        showStatus('Gagal menghapus session!', 'error');
+        showStatus('Failed to delete session!', 'error');
         return;
       }
       
-      showStatus(`Session "${session?.name || ''}" berhasil dihapus!`, 'success');
+      showStatus(`Session "${session?.name || ''}" deleted successfully!`, 'success');
       loadSessions();
     });
   });

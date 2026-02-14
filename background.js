@@ -13,8 +13,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 async function handleRestoreSession(session, openNewTab = false) {
   try {
     if (!session || !session.cookies || session.cookies.length === 0) {
-      throw new Error('Session tidak memiliki cookies');
+      throw new Error('Session has no cookies');
     }
+
 
     let targetTabId;
 
@@ -29,8 +30,9 @@ async function handleRestoreSession(session, openNewTab = false) {
       // Use current active tab
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       if (!tabs || tabs.length === 0) {
-        throw new Error('Tidak ada tab aktif');
+        throw new Error('No active tab');
       }
+
       targetTabId = tabs[0].id;
     }
 
