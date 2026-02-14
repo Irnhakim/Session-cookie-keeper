@@ -1,4 +1,8 @@
 // Auto Login Extension - Popup Script (Cookie-based Session)
+
+// Global variable to track edit state
+let currentEditHandler = null;
+
 document.addEventListener('DOMContentLoaded', function() {
   // Load saved sessions on startup
   loadSessions();
@@ -8,6 +12,13 @@ document.addEventListener('DOMContentLoaded', function() {
     e.preventDefault();
     saveCurrentSession();
   });
+
+  // Export/Import handlers
+  document.getElementById('exportBtn').addEventListener('click', exportSessions);
+  document.getElementById('importBtn').addEventListener('click', function() {
+    document.getElementById('importFile').click();
+  });
+  document.getElementById('importFile').addEventListener('change', importSessions);
 });
 
 // Save current session (cookies from active tab)
@@ -138,6 +149,12 @@ function saveCurrentSession() {
 
 // Load and display saved sessions
 function loadSessions() {
+  // Clean up any existing edit handler
+  if (currentEditHandler) {
+    document.removeEventListener('click', currentEditHandler);
+    currentEditHandler = null;
+  }
+
   chrome.storage.local.get(['sessions'], function(result) {
     const sessions = result.sessions || [];
     const sessionsList = document.getElementById('sessionsList');
@@ -159,7 +176,10 @@ function loadSessions() {
       
       sessionItem.innerHTML = `
         <div class="account-header">
-          <span class="account-name">${escapeHtml(session.name)}</span>
+          <div class="account-name-wrapper">
+            <span class="account-name">${escapeHtml(session.name)}</span>
+            <button class="btn-edit" data-action="edit" title="Edit session name">✏️</button>
+          </div>
           <span class="cookie-count">${cookieCount} 🍪</span>
         </div>
         <div class="account-url">${escapeHtml(session.domain)}</div>
@@ -181,13 +201,142 @@ function loadSessions() {
       const restoreBtn = sessionItem.querySelector('[data-action="restore"]');
       const openBtn = sessionItem.querySelector('[data-action="open"]');
       const deleteBtn = sessionItem.querySelector('[data-action="delete"]');
+      const editBtn = sessionItem.querySelector('[data-action="edit"]');
       
       restoreBtn.addEventListener('click', () => restoreSession(session.id));
       openBtn.addEventListener('click', () => openAndRestore(session.id));
       deleteBtn.addEventListener('click', () => deleteSession(session.id));
+      editBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent triggering other clicks
+        editSessionName(session.id, sessionItem);
+      });
       
       sessionsList.appendChild(sessionItem);
     });
+  });
+}
+
+// Edit session name
+function editSessionName(sessionId, sessionItem) {
+  // Clean up any existing edit handler first
+  if (currentEditHandler) {
+    document.removeEventListener('click', currentEditHandler);
+    currentEditHandler = null;
+  }
+
+  chrome.storage.local.get(['sessions'], function(result) {
+    const sessions = result.sessions || [];
+    const session = sessions.find(s => s.id === sessionId);
+    
+    if (!session) {
+      showStatus('Session not found!', 'error');
+      return;
+    }
+
+    const nameWrapper = sessionItem.querySelector('.account-name-wrapper');
+    const currentName = session.name;
+    
+    // Create edit input
+    nameWrapper.innerHTML = `
+      <input type="text" class="edit-name-input" value="${escapeHtml(currentName)}" />
+      <button class="btn-save-edit" title="Save">✅</button>
+      <button class="btn-cancel-edit" title="Cancel">❌</button>
+    `;
+    
+    const input = nameWrapper.querySelector('.edit-name-input');
+    const saveBtn = nameWrapper.querySelector('.btn-save-edit');
+    const cancelBtn = nameWrapper.querySelector('.btn-cancel-edit');
+    
+    // Focus on input
+    input.focus();
+    input.select();
+    
+    // Save handler
+    const saveEdit = () => {
+      const newName = input.value.trim();
+      
+      if (!newName) {
+        showStatus('Session name cannot be empty!', 'error');
+        return;
+      }
+      
+      if (newName === currentName) {
+        // No change, just reload
+        cleanupAndReload();
+        return;
+      }
+      
+      // Check for duplicate names
+      const nameExists = sessions.some(s => s.id !== sessionId && s.name === newName);
+      if (nameExists) {
+        showStatus('A session with this name already exists!', 'error');
+        return;
+      }
+      
+      // Update session name
+      session.name = newName;
+      session.updatedAt = new Date().toISOString();
+      
+      chrome.storage.local.set({ sessions: sessions }, function() {
+        if (chrome.runtime.lastError) {
+          showStatus('Failed to update session name!', 'error');
+          return;
+        }
+        
+        showStatus(`Session renamed to "${newName}" successfully!`, 'success');
+        cleanupAndReload();
+      });
+    };
+    
+    // Cancel handler
+    const cancelEdit = () => {
+      cleanupAndReload();
+    };
+    
+    // Cleanup function
+    const cleanupAndReload = () => {
+      if (currentEditHandler) {
+        document.removeEventListener('click', currentEditHandler);
+        currentEditHandler = null;
+      }
+      loadSessions();
+    };
+    
+    // Event listeners for buttons
+    saveBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      saveEdit();
+    });
+    
+    cancelBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      cancelEdit();
+    });
+    
+    // Enter key to save, Escape key to cancel
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        saveEdit();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        cancelEdit();
+      }
+    });
+    
+    // Click outside to cancel
+    currentEditHandler = (e) => {
+      if (!nameWrapper.contains(e.target)) {
+        cancelEdit();
+      }
+    };
+    
+    // Delay adding the click listener to avoid immediate trigger
+    setTimeout(() => {
+      if (currentEditHandler) {
+        document.addEventListener('click', currentEditHandler);
+      }
+    }, 100);
   });
 }
 
@@ -295,5 +444,120 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// Functions are now attached via event listeners in loadSessions()
-// No need for global window assignments (CSP compliant)
+// Export sessions to JSON file
+function exportSessions() {
+  chrome.storage.local.get(['sessions'], function(result) {
+    const sessions = result.sessions || [];
+    
+    if (sessions.length === 0) {
+      showStatus('No sessions to export!', 'error');
+      return;
+    }
+
+    const exportData = {
+      version: '1.0',
+      exportDate: new Date().toISOString(),
+      sessions: sessions
+    };
+
+    const dataStr = JSON.stringify(exportData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `session-cookies-backup-${new Date().toISOString().split('T')[0]}.json`;
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    URL.revokeObjectURL(url);
+    showStatus(`Exported ${sessions.length} sessions successfully!`, 'success');
+  });
+}
+
+// Import sessions from JSON file
+function importSessions(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  
+  reader.onload = function(e) {
+    try {
+      const importData = JSON.parse(e.target.result);
+      
+      if (!importData.sessions || !Array.isArray(importData.sessions)) {
+        throw new Error('Invalid file format: sessions array not found');
+      }
+
+      const sessions = importData.sessions;
+      
+      // Validate session structure
+      const validSessions = sessions.filter(session => {
+        return session.id && session.name && session.url && session.cookies;
+      });
+
+      if (validSessions.length === 0) {
+        throw new Error('No valid sessions found in file');
+      }
+
+      // Check for duplicates and merge
+      chrome.storage.local.get(['sessions'], function(result) {
+        const existingSessions = result.sessions || [];
+        const existingIds = new Set(existingSessions.map(s => s.id));
+        const existingNames = new Set(existingSessions.map(s => s.name));
+        
+        let addedCount = 0;
+        let skippedCount = 0;
+        
+        validSessions.forEach(session => {
+          if (existingIds.has(session.id)) {
+            // Skip duplicate ID
+            skippedCount++;
+          } else if (existingNames.has(session.name)) {
+            // Rename if name exists
+            let newName = session.name;
+            let counter = 1;
+            while (existingNames.has(newName)) {
+              newName = `${session.name} (imported ${counter})`;
+              counter++;
+            }
+            session.name = newName;
+            existingNames.add(newName);
+            existingSessions.push(session);
+            addedCount++;
+          } else {
+            existingNames.add(session.name);
+            existingSessions.push(session);
+            addedCount++;
+          }
+        });
+
+        chrome.storage.local.set({ sessions: existingSessions }, function() {
+          if (chrome.runtime.lastError) {
+            showStatus('Failed to import sessions!', 'error');
+            return;
+          }
+          
+          showStatus(`Import complete! Added ${addedCount} sessions, skipped ${skippedCount} duplicates.`, 'success');
+          loadSessions();
+        });
+      });
+
+    } catch (error) {
+      showStatus('Import failed: ' + error.message, 'error');
+    }
+    
+    // Reset file input
+    event.target.value = '';
+  };
+  
+  reader.onerror = function() {
+    showStatus('Error reading file!', 'error');
+    event.target.value = '';
+  };
+  
+  reader.readAsText(file);
+}

@@ -48,13 +48,33 @@
       <div id="sessionsList" class="accounts-list">
         <p class="empty-state">No sessions saved yet</p>
       </div>
+      
+      <!-- Export/Import Buttons -->
+      <div class="data-actions">
+        <button id="exportBtn" class="btn btn-export">📤 Export Data</button>
+        <button id="importBtn" class="btn btn-import">📥 Import Data</button>
+        <input type="file" id="importFile" accept=".json" style="display: none;">
+      </div>
     </div>
+
 
 
     <!-- Status Message -->
     <div id="statusMessage" class="status-message"></div>
+
+    <!-- Credits -->
+    <div class="credits-section">
+      <p class="credits-title">Made with ❤️ by Irnhakim</p>
+      <div class="credits-links">
+        <a href="https://github.com/Irnhakim" target="_blank" class="credit-link">GitHub</a>
+        <a href="https://www.instagram.com/irnhakim/" target="_blank" class="credit-link">Instagram</a>
+        <a href="https://buymeacoffee.com/irnhakim" target="_blank" class="credit-link">Buy Me a Coffee</a>
+        <a href="https://teer.id/ryuzure" target="_blank" class="credit-link">Trakteer Me</a>
+      </div>
+    </div>
   </div>
 
   <script src="popup.js"></script>
+
 </body>
 </html>
